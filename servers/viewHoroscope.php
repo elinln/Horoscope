@@ -1,22 +1,25 @@
 <?php
 
 try {
+
+    require("./addHoroscope.php");
     
     session_start();
     
-    if(isset($_SERVER["REQUEST_METHOD"])) {
+    if (isset($_SERVER["REQUEST_METHOD"])) {
 
-        if($_SERVER["REQUEST_METHOD"] === "GET") {
+        if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
-            if(isset($_SESSION["horoscope"])) {
+            if (isset($_SESSION["horoscope"]))  {
 
-                echo json_encode($_SESSION["horoscope"]);
+                echo json_encode(true);
+                exit;
                  
-            } else {
+            } if (!isset($_SESSION["horoscope"])) {
                 
-                echo json_encode("No date is saved...");
-                
-            }
+                echo json_encode(false);  
+                exit;              
+            } 
 
         } 
     }
@@ -25,11 +28,8 @@ try {
     echo json_encode(
         array(
             "Message" => $error -> getMessage(),
-            "Status" => $error -> getCode()
-        )
+            "Success" => false 
+            )
     );
+    exit;
 }
-
-
-
-?>

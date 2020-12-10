@@ -1,6 +1,8 @@
 <?php
 
 try {
+
+    require("./calculateHoroscope.php");
     
     session_start();
     
@@ -8,16 +10,19 @@ try {
 
          if($_SERVER["REQUEST_METHOD"] === "DELETE") {
 
-           if(isset($_POST["horoscope"])) {
+            if(!isset($_POST["dayOfBirth"]) && (!isset($_SESSION["horoscope"]))) {
 
-           } else {
+                unset($_SESSION["dayOfBirth"]);
+                echo json_encode(false);
+                exit;
 
-            throw new Exception("No date was found in the requests body...", 500);
-           }
+            } else {
+                unset($_SESSION["horoscope"]);
+                echo json_encode(true);
+                exit;
+            }
 
-        } else {
-            throw new Exception("Not a valid request-method...", 405);
-        }
+        } 
     }
     
 } catch(Exception $error) {
@@ -27,6 +32,5 @@ try {
             "Status" => $error -> getCode()
         )
     );
+    exit;
 }
-
-?>

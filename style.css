@@ -2,7 +2,7 @@ body {
     margin: 0;
     box-sizing: border-box;
     background: rgb(189,186,244);
-background: linear-gradient(90deg, rgba(189,186,244,1) 0%, rgba(122,183,212,1) 52%, rgba(131,199,205,1) 100%, rgba(0,212,255,1) 100%);
+background: linear-gradient(90deg, rgb(165, 162, 227) 0%, rgb(137, 137, 252) 52%, rgba(131,199,205,1) 100%, rgba(0,212,255,1) 100%);
 }
 
 h1 {
@@ -24,7 +24,7 @@ h1 {
     height: 250px;
     margin-left: auto;
     margin-right: auto;
-    padding: 50px;
+    padding: 30px;
 
     
     background-color: rgb(242, 242, 242);
@@ -33,6 +33,7 @@ h1 {
 
 input {
     font-size: 16px;
+    font-family: sans-serif;
 }
 
 button {
@@ -43,4 +44,9 @@ button {
 
 .buttons {
     margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#showHoroscope {
+    font-size: 30px;
 }

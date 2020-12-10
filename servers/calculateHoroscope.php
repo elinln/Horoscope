@@ -1,24 +1,20 @@
-<?php
-session_start();
-if ($_SESSION["horoscope"]) {
-    return true;
-}
+<?php 
 
-$inputDate = $_POST["dayOfBirth"];
-$date = date_parse($inputDate);
-if ($date) {
-    $day = $date["day"];
-    $month = $date["month"];
-    $_SESSION["horoscope"] = calculateHoroscope($day, $month);
-}
 
-function calculateHoroscope($day, $month)
-{
+function calculateHoroscope($inputDate) {
+   
+   $date = $inputDate;
+   $day = $date[8] . $date[9];
+   $month = $date[5] . $date[6]; 
+   
+   $day = intval($day);
+   $month = intval($month);
+    
     switch ($month) {
         case 1:
             if ($day < 21) {
-                return "Stenbock";
-            }
+            return "Stenbock";
+            } 
             return "Vattuman";
         case 2:
             if ($day < 19) {
@@ -32,7 +28,7 @@ function calculateHoroscope($day, $month)
             return "Vädur";
         case 4:
             if ($day < 22) {
-                return "Väder";
+                return "Vädur";
             }
             return "Oxe";
         case 5:
@@ -75,5 +71,6 @@ function calculateHoroscope($day, $month)
                 return "Stenbock";
             }
             return "Vattuman";
-    };
+        };
+     
 };
