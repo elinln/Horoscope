@@ -1,44 +1,38 @@
 <?php
 
 try {
-    
+
     session_start();
-    
-    if(isset($_SERVER["REQUEST_METHOD"])) {
 
-         if($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_SERVER["REQUEST_METHOD"])) {
 
-           if(isset($_POST["horoscope"])) {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-           } else {
+            if (!isset($_SESSION["dayOfBirth"])) {
+                throw new Exception("Inget datum är sparat", 400);
+            }
+            if (isset($_POST["horoscope"])) {
 
-            throw new Exception("No date was found in the requests body...", 500);
-           }
+                $_SESSION["dayOfBirth"] = $_POST["horoscope"];
 
+                echo json_encode(array(
+                    "Success" => true
+                ));
+            } else {
+
+                throw new Exception("No date was found in the requests body...", 500);
+            }
         } else {
             throw new Exception("Not a valid request-method...", 405);
         }
     }
-    
-} catch(Exception $error) {
+} catch (Exception $error) {
     echo json_encode(
         array(
-            "Message" => $error -> getMessage(),
-            "Status" => $error -> getCode()
+            "Message" => $error->getMessage(),
+            "Success" => false
         )
     );
+    exit;
 }
 
-/* if ($_SESSION["horoscope"]) {
-    return true;
-}
-
-    $inputDate = $_POST["dayOfBirth"];
-    $date = date_parse($inputDate);
-    if ($date) {
-        $day = $date["day"];
-        $month = $date["month"];
-       $_SESSION ["horoscope"] = calculateHoroscope($day, $month);
-    }  */
-
-?>
