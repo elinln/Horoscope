@@ -8,12 +8,9 @@ try {
 
          if($_SERVER["REQUEST_METHOD"] === "DELETE") {
 
-           if(isset($_POST["horoscope"])) {
-
-           } else {
-
-            throw new Exception("No date was found in the requests body...", 500);
-           }
+            unset($_SESSION["dayOfBirth"]);
+            echo json_encode(array(
+                "Success" => true));
 
         } else {
             throw new Exception("Not a valid request-method...", 405);
@@ -27,6 +24,7 @@ try {
             "Status" => $error -> getCode()
         )
     );
+    exit;
 }
 
 ?>

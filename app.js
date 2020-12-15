@@ -1,38 +1,99 @@
 window.addEventListener("load", initSite)
 document.getElementById("saveBtn").addEventListener("click", saveHoroscope)
-document.getElementById("deleteBtn"),addEventListener("click", deleteHoroscope)
-document.getElementById("updateBtn").addEventListener("click", getHoroscope)
+document.getElementById("deleteBtn").addEventListener("click", deleteHoroscope)
+document.getElementById("updateBtn").addEventListener("click", updateHoroscope)
 
-function initSite() {
-
+async function initSite() {
 }
+
+
+//_____________save-knapp -> saveHoroscope -> addHoroscope.php "POST"
 
 async function saveHoroscope() {
-    console.log("save horoscope")
-    const collectedHoroscope = await makeRequest("./servers/viewHoroscope.php", "GET")
-    console.log(collectedHoroscope)
-}
+    const dateToSave = document.getElementById("inputNumber").value
+    const horoscopeText = document.getElementById("showHoroscope")
+
+    if (!dateToSave.length) {
+        console.log("Du måste välja ett datum...")
+        horoscopeText.innerText = "Välj ett datum..."
+    } else {
+        const body = new FormData()
+        body.set("horoscope", dateToSave)
+
+        const serverResponse = await makeRequest("./servers/addHoroscope.php", "POST", body)
+
+        if (serverResponse["Success"]) {
+            viewHoroscope()
+        } else {
+            horoscopeText.innerText = serverResponse["Message"]
+        }
+    }
 
 
-async function getHoroscope() {
-    console.log("get horoscope")
-    const collectedHoroscope = await makeRequest("./servers/addHoroscope.php", "POST")
-    console.log(collectedHoroscope)
 }
+//_____________update-knapp -> updateHoroscope -> updateHoroscope.php "POST"
+
+async function updateHoroscope() {
+    const dateToSave = document.getElementById("inputNumber").value
+    const horoscopeText = document.getElementById("showHoroscope")
+
+
+    if (!dateToSave.length) {
+        console.log("Du måste välja ett datum...")
+        horoscopeText.innerText = "Välj ett nytt datum..."
+        return
+    }
+
+    const body = new FormData()
+    body.set("horoscope", dateToSave)
+
+    const serverResponse = await makeRequest("./servers/updateHoroscope.php", "POST", body)
+
+
+    if (serverResponse["Success"]) {
+        viewHoroscope()
+    } else {
+        horoscopeText.innerText = serverResponse["Message"]
+    }
+
+}
+
+//_____________delete-knapp -> deleteHoroscope -> deleteHoroscope.php "DELETE"
 
 
 async function deleteHoroscope() {
-    console.log("delete horoscope")
-    const collectedHoroscope = await makeRequest("./servers/deleteHoroscope.php", "POST")
-    console.log(collectedHoroscope)
+
+    const serverResponse = await makeRequest("./servers/deleteHoroscope.php", "DELETE")
+
+    const horoscopeText = document.getElementById("showHoroscope")
+    horoscopeText.innerText = ""
+    const inputDate = document.getElementById("inputNumber")
+    inputDate.value = ""
+
 }
 
+
+// viewHoroscope.php -> viewHoroscope() -> "GET"
+
+async function viewHoroscope() {
+    const serverResponse = await makeRequest("./servers/viewHoroscope.php", "GET")
+    const horoscopeText = document.getElementById("showHoroscope")
+    const inputDate = document.getElementById("inputNumber")
+
+
+    if (serverResponse["Success"]) {
+        horoscopeText.innerText = serverResponse["Horoscope"]
+        inputDate.value = serverResponse["DateOfBirth"]
+    }
+}
+
+//________________________________________________
 
 
 async function makeRequest(path, method, body) {
     try {
         const response = await fetch(path, {
-            method, 
+            method,
             body
         })
         console.log(response)
@@ -42,40 +103,7 @@ async function makeRequest(path, method, body) {
     }
 }
 
-/* () => {
-    const inputNumber = document.querySelector("#inputNumber")
-    const showHoroscope = document.querySelector("#showHoroscope")
 
-    document.querySelector("#saveBtn").addEventListener("click", () => {
-        var formData = new FormData();
-
-        formData.append("dayOfBirth", inputNumber.value);
-
-        fetch("/addHoroscope.php", { method: "POST", body: formData })
-            .then((res) => {
-                showHoroscope()
-            })
-    })
-    document.querySelector("#deleteBtn").addEventListener("click", () => {
-        inputNumber.value = ""
-        fetch("/deleteHoroscope.php", { method: "DELETE" })
-
-    })
-    document.querySelector("#updateBtn").addEventListener("click", () => {
-        fetch("/updateHoroscope.php", { method: "POST" })
-            .then((res) => {
-                showHoroscope()
-            })
-    })
-    document.querySelector("#showHoroscope")
-        fetch("/viewHoroscope.php")
-            .then((res) => {
-                res.text().then((text) => {
-                    showHoroscope.textContent = text
-                })
-            }) 
-    
-}) */
 
 
 
