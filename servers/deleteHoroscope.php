@@ -1,6 +1,8 @@
 <?php
 
 try {
+
+    require("./calculateHoroscope.php");
     
     session_start();
     
@@ -8,13 +10,19 @@ try {
 
          if($_SERVER["REQUEST_METHOD"] === "DELETE") {
 
-            unset($_SESSION["dayOfBirth"]);
-            echo json_encode(array(
-                "Success" => true));
+            if(!isset($_POST["dayOfBirth"]) && (!isset($_SESSION["horoscope"]))) {
 
-        } else {
-            throw new Exception("Not a valid request-method...", 405);
-        }
+                unset($_SESSION["dayOfBirth"]);
+                echo json_encode(false);
+                exit;
+
+            } else {
+                unset($_SESSION["horoscope"]);
+                echo json_encode(true);
+                exit;
+            }
+
+        } 
     }
     
 } catch(Exception $error) {
@@ -26,5 +34,3 @@ try {
     );
     exit;
 }
-
-?>

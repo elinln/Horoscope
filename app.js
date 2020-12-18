@@ -7,84 +7,88 @@ async function initSite() {
 }
 
 
-//_____________save-knapp -> saveHoroscope -> addHoroscope.php "POST"
+// Save-knapp -> saveHoroscope -> addHoroscope.php "POST"
 
 async function saveHoroscope() {
     const dateToSave = document.getElementById("inputNumber").value
     const horoscopeText = document.getElementById("showHoroscope")
 
     if (!dateToSave.length) {
-        console.log("Du måste välja ett datum...")
         horoscopeText.innerText = "Välj ett datum..."
-    } else {
-        const body = new FormData()
-        body.set("horoscope", dateToSave)
-
-        const serverResponse = await makeRequest("./servers/addHoroscope.php", "POST", body)
-
-        if (serverResponse["Success"]) {
-            viewHoroscope()
-        } else {
-            horoscopeText.innerText = serverResponse["Message"]
-        }
+        return
     }
 
+    const body = new FormData()
+    body.set("dayOfBirth", dateToSave)
 
+    const serverResponse = await makeRequest("./servers/addHoroscope.php", "POST", body)
+
+    if (serverResponse !== false) {
+        horoscopeText.innerText = serverResponse
+        console.log(serverResponse)
+        const dateToSave = document.getElementById("inputNumber")
+        dateToSave.value = ""
+
+    } else {
+        horoscopeText.innerText = "Ett datum är redan sparat..."
+        console.log("Gick ej att spara...")
+
+    }
 }
-//_____________update-knapp -> updateHoroscope -> updateHoroscope.php "POST"
+// Update-knapp -> updateHoroscope -> updateHoroscope.php "POST"
 
 async function updateHoroscope() {
     const dateToSave = document.getElementById("inputNumber").value
     const horoscopeText = document.getElementById("showHoroscope")
 
-
     if (!dateToSave.length) {
-        console.log("Du måste välja ett datum...")
-        horoscopeText.innerText = "Välj ett nytt datum..."
+        horoscopeText.innerText = "Välj ett datum..."
+        console.log("Ett datum behöver sparas...")
         return
     }
 
     const body = new FormData()
-    body.set("horoscope", dateToSave)
+    body.set("dayOfBirth", dateToSave)
 
     const serverResponse = await makeRequest("./servers/updateHoroscope.php", "POST", body)
 
+    if (serverResponse !== false) {
+        horoscopeText.innerText = serverResponse
+        console.log(serverResponse)
 
-    if (serverResponse["Success"]) {
-        viewHoroscope()
     } else {
-        horoscopeText.innerText = serverResponse["Message"]
-    }
+        horoscopeText.innerText = "Spara ett nytt datum..."
+        console.log("Gick ej att spara...")
 
+    }
 }
 
-//_____________delete-knapp -> deleteHoroscope -> deleteHoroscope.php "DELETE"
+// Delete-knapp -> deleteHoroscope -> deleteHoroscope.php "DELETE"
 
 
 async function deleteHoroscope() {
-
+    const inputDate = document.getElementById("inputNumber")
     const serverResponse = await makeRequest("./servers/deleteHoroscope.php", "DELETE")
 
-    const horoscopeText = document.getElementById("showHoroscope")
-    horoscopeText.innerText = ""
-    const inputDate = document.getElementById("inputNumber")
-    inputDate.value = ""
+    if (inputDate) {
+        const horoscopeText = document.getElementById("showHoroscope")
+        horoscopeText.innerText = ""
+        const inputDate = document.getElementById("inputNumber")
+        inputDate.value = ""
+        console.log(serverResponse)
+    } else {
+        console.log(serverResponse)
+    }
 
 }
 
 
-// viewHoroscope.php -> viewHoroscope() -> "GET"
+// viewHoroscope.php -> viewHoroscope() - "GET"
 
 async function viewHoroscope() {
     const serverResponse = await makeRequest("./servers/viewHoroscope.php", "GET")
-    const horoscopeText = document.getElementById("showHoroscope")
-    const inputDate = document.getElementById("inputNumber")
 
-
-    if (serverResponse["Success"]) {
-        horoscopeText.innerText = serverResponse["Horoscope"]
-        inputDate.value = serverResponse["DateOfBirth"]
-    }
+    console.log(serverResponse)
 }
 
 //________________________________________________
@@ -102,9 +106,3 @@ async function makeRequest(path, method, body) {
         console.error(err)
     }
 }
-
-
-
-
-
-

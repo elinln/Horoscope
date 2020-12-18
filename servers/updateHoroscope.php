@@ -1,6 +1,7 @@
 <?php
 
 try {
+    require("./calculateHoroscope.php");
 
     session_start();
 
@@ -8,31 +9,30 @@ try {
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-            if (!isset($_SESSION["dayOfBirth"])) {
-                throw new Exception("Inget datum är sparat", 400);
-            }
-            if (isset($_POST["horoscope"])) {
+            if (isset($_POST["dayOfBirth"]) && isset($_SESSION["horoscope"])) {
 
-                $_SESSION["dayOfBirth"] = $_POST["horoscope"];
+                $_SESSION["horoscope"] = (serialize($_POST["dayOfBirth"]));
+                $inputDate = (unserialize($_SESSION["horoscope"]));
+                $horoscope = calculateHoroscope($inputDate);
 
-                echo json_encode(array(
-                    "Success" => true
-                ));
+                echo json_encode($horoscope);
+                exit;
+                
+                
             } else {
-
-                throw new Exception("No date was found in the requests body...", 500);
-            }
-        } else {
-            throw new Exception("Not a valid request-method...", 405);
+                
+                echo json_encode(false);
+                exit;
+            }  
         }
     }
+    
 } catch (Exception $error) {
     echo json_encode(
         array(
             "Message" => $error->getMessage(),
-            "Success" => false
+            "Success" => false,
         )
     );
     exit;
 }
-
